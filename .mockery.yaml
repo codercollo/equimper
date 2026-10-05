@@ -1,0 +1,13 @@
+with-expecter: true
+issue-845-fix: true
+resolve-type-alias: false
+packages:
+  github.com/codercollo/equimper:
+    config:
+      dir: mocks
+      outpkg: mocks
+      filename: "mock_{{.InterfaceName}}.go"
+      mockname: "Mock{{.InterfaceName}}"
+    interfaces:
+      AuthService:
+      UserRepo:
