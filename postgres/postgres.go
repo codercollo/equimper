@@ -69,3 +69,30 @@ func (db *DB) Migrate() error {
 	log.Println("migration done")
 	return nil
 }
+
+func (db *DB) Trancate(ctx context.Context) error {
+	if _, err := db.Pool.Exec(ctx, `DELETE FROM users;`); err != nil {
+		return fmt.Errorf("error truncate: %v", err)
+	}
+
+	return nil
+}
+
+func (db *DB) Drop() error {
+	_, b, _, _ := runtime.Caller(0)
+
+	migrationPath := "file://" + filepath.ToSlash(filepath.Join(filepath.Dir(b), "migrations"))
+
+	m, err := migrate.New(migrationPath, db.conf.Database.URL)
+	if err != nil {
+		return fmt.Errorf("error create the migrate instance: %v", err)
+	}
+	defer m.Close()
+
+	if err := m.Drop(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("error drop: %v", err)
+	}
+
+	log.Println("drop done")
+	return nil
+}

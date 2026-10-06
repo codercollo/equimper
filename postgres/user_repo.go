@@ -13,6 +13,12 @@ type UserRepo struct {
 	DB *DB
 }
 
+func NewUserRepo(db *DB) *UserRepo {
+	return &UserRepo{
+		DB: db,
+	}
+}
+
 func createUser(ctx context.Context, tx pgx.Tx, user equimper.User) (equimper.User, error) {
 	query := `INSERT INTO users (email, username, password) VALUES ($1, $2, $3) RETURNING *`
 

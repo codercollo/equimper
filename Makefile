@@ -24,3 +24,6 @@ migration:
 
 run:
 	go run ./cmd/graphqlserver 
+
+generate:
+	go generate ./...
