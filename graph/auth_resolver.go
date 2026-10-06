@@ -36,7 +36,21 @@ func (m *mutationResolver) Register(ctx context.Context, input RegisterInput) (*
 }
 
 func (m *mutationResolver) Login(ctx context.Context, input LoginInput) (*AuthResponse, error) {
-	panic("implement me")
+	res, err := m.AuthService.Login(ctx, equimper.LoginInput{
+		Email:    input.Email,
+		Password: input.Password,
+	})
+
+	if err != nil {
+		switch {
+		case errors.Is(err, equimper.ErrValidation) ||
+			errors.Is(err, equimper.ErrBadCredentials):
+			return nil, buildBadRequestError(ctx, err)
+		default:
+			return nil, err
+		}
+	}
+	return mapAuthResponse(res), nil
 }
 
 func (q *queryResolver) Me(ctx context.Context) (*User, error) {

@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/codercollo/equimper/config"
+	"github.com/codercollo/equimper/domain"
 	"github.com/codercollo/equimper/graph"
 	"github.com/codercollo/equimper/postgres"
 	"github.com/go-chi/chi/middleware"
@@ -34,11 +35,17 @@ func main() {
 	router.Use(middleware.RedirectSlashes)
 	router.Use(middleware.Timeout(time.Second * 60))
 
+	userRepo := postgres.NewUserRepo(db)
+
+	authService := domain.NewAuthService(userRepo)
+
 	router.Handle("/", playground.Handler("Equimper", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
 		graph.NewExecutableSchema(
 			graph.Config{
-				Resolvers: &graph.Resolver{},
+				Resolvers: &graph.Resolver{
+					AuthService: authService,
+				},
 			},
 		),
 	))
