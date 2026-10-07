@@ -26,6 +26,11 @@ type AuthResponse struct {
 	User        User
 }
 
+type AuthToken struct {
+	ID  string
+	Sub string
+}
+
 type LoginInput struct {
 	Email    string
 	Password string

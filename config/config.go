@@ -10,10 +10,16 @@ import (
 
 type Config struct {
 	Database database
+	JWT      jwt
 }
 
 type database struct {
 	URL string
+}
+
+type jwt struct {
+	Secret string
+	Issuer string
 }
 
 func findRoot() (string, bool) {
@@ -52,6 +58,10 @@ func New() *Config {
 	return &Config{
 		Database: database{
 			URL: os.Getenv("DB_URL"),
+		},
+		JWT: jwt{
+			Secret: os.Getenv("JWT_SECRET"),
+			Issuer: os.Getenv("DOMAIN"),
 		},
 	}
 
